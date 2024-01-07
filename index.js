@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 require('dotenv').config()
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const port = process.env.PORT || 5000;
 
 // MIDDLEWARE--------->
@@ -26,9 +26,17 @@ async function run() {
 
     const productsCollection = client.db('Brand_Tour').collection('products');
 
-
+    //get all products
     app.get('/products' , async(req,res) =>{
       const result = await productsCollection.find().toArray();
+      res.send(result)
+    })
+
+    // get single products by id
+    app.get('/products/:id', async(req,res) =>{
+      const id =  req.params.id;
+      const query = {_id : new ObjectId(id)};
+      const result = await productsCollection.findOne(query);
       res.send(result)
     })
     // Send a ping to confirm a successful connection
